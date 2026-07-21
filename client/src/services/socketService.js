@@ -1,8 +1,7 @@
 import { io } from 'socket.io-client'
 
-// En production, même URL que le backend
-// En dev, localhost:3001
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001'
+// Remplace par TON URL Render
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://quizblast-server.onrender.com'
 
 const socket = io(SOCKET_URL, {
   autoConnect: false,
