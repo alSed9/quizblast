@@ -13,11 +13,7 @@ class GameManager {
       players: [],
       questions: selectedQuestions,
       totalQuestions,
-      currentQuestionIndex: 0,
-      gamePhase: 'lobby', // lobby | playing | result | waiting | final
-      currentAnswers: {},
-      timeLeft: 0,
-      isPaused: false,
+      gamePhase: 'lobby',
       createdAt: Date.now(),
     }
     this.rooms.set(roomCode, room)
@@ -51,6 +47,8 @@ class GameManager {
       total: 0,
       passed: 0,
       ready: false,
+      currentQuestionIndex: 0,
+      finished: false,
     }
     room.players.push(newPlayer)
     return newPlayer
@@ -75,102 +73,118 @@ class GameManager {
     if (room.players.length < 2) return null
     
     room.gamePhase = 'playing'
-    room.currentQuestionIndex = 0
-    room.currentAnswers = {}
-    room.timeLeft = room.questions[0].time
-    room.isPaused = false
+    room.players.forEach(p => {
+      p.currentQuestionIndex = 0
+      p.score = 0
+      p.correct = 0
+      p.total = 0
+      p.passed = 0
+      p.finished = false
+    })
     
     return room
   }
 
-  getCurrentQuestion(roomCode) {
+  getQuestionForPlayer(roomCode, socketId) {
     const room = this.getRoom(roomCode)
     if (!room) return null
-    return room.questions[room.currentQuestionIndex] || null
+    
+    const player = room.players.find(p => p.socketId === socketId)
+    if (!player || player.finished) return null
+    
+    const index = player.currentQuestionIndex
+    if (index >= room.questions.length) {
+      player.finished = true
+      return null
+    }
+    
+    // Déterminer le niveau actuel
+    let currentLevel = 'Facile'
+    if (index < 5) currentLevel = 'Facile'
+    else if (index < 10) currentLevel = 'Moyen'
+    else if (index < 15) currentLevel = 'Difficile'
+    else currentLevel = 'Expert'
+    
+    // Déterminer si on commence un nouveau niveau
+    const isNewLevel = index === 0 || index === 5 || index === 10 || index === 15 || index === 20
+    
+    return {
+      question: room.questions[index],
+      index: index,
+      total: room.totalQuestions,
+      currentLevel,
+      isNewLevel,
+    }
   }
 
   submitAnswer(roomCode, socketId, answerIndex) {
     const room = this.getRoom(roomCode)
     if (!room) return null
     
-    const question = this.getCurrentQuestion(roomCode)
+    const player = room.players.find(p => p.socketId === socketId)
+    if (!player || player.finished) return null
+    
+    const question = room.questions[player.currentQuestionIndex]
     if (!question) return null
     
-    if (room.currentAnswers[socketId]) return null // déjà répondu
-    
     const isCorrect = answerIndex === question.correctIndex
-    const timeTaken = question.time - room.timeLeft
-    
-    room.currentAnswers[socketId] = {
-      answerIndex,
-      isCorrect,
-      timeTaken,
-      answered: true,
-    }
     
     if (isCorrect) {
-      const player = room.players.find(p => p.socketId === socketId)
-      if (player) {
-        player.score += 10
-        player.correct += 1
-        player.total += 1
-      }
-    } else {
-      const player = room.players.find(p => p.socketId === socketId)
-      if (player) {
-        player.total += 1
-      }
+      player.score += 10
+      player.correct += 1
+    }
+    player.total += 1
+    player.currentQuestionIndex += 1
+    
+    if (player.currentQuestionIndex >= room.totalQuestions) {
+      player.finished = true
     }
     
-    return { isCorrect, playersAnswered: Object.keys(room.currentAnswers).length }
+    // Vérifier si tous ont fini
+    const allFinished = room.players.every(p => p.finished)
+    if (allFinished) {
+      room.gamePhase = 'final'
+    }
+    
+    return {
+      isCorrect,
+      player,
+      correctAnswer: question.correctIndex,
+      correctAnswerText: question.answers[question.correctIndex],
+      isFinished: player.finished,
+      allFinished,
+    }
   }
 
   passQuestion(roomCode, socketId) {
     const room = this.getRoom(roomCode)
     if (!room) return null
     
-    if (room.currentAnswers[socketId]) return null
-    
-    room.currentAnswers[socketId] = {
-      answerIndex: -1,
-      isCorrect: false,
-      timeTaken: 0,
-      answered: true,
-      passed: true,
-    }
-    
     const player = room.players.find(p => p.socketId === socketId)
-    if (player) {
-      player.passed += 1
-      player.total += 1
+    if (!player || player.finished) return null
+    
+    const question = room.questions[player.currentQuestionIndex]
+    
+    player.passed += 1
+    player.total += 1
+    player.currentQuestionIndex += 1
+    
+    if (player.currentQuestionIndex >= room.totalQuestions) {
+      player.finished = true
     }
     
-    return { playersAnswered: Object.keys(room.currentAnswers).length }
-  }
-
-  nextQuestion(roomCode) {
-    const room = this.getRoom(roomCode)
-    if (!room) return null
-    
-    const nextIndex = room.currentQuestionIndex + 1
-    
-    if (nextIndex >= room.questions.length) {
+    const allFinished = room.players.every(p => p.finished)
+    if (allFinished) {
       room.gamePhase = 'final'
-      return { gamePhase: 'final', ranking: this.getRanking(roomCode) }
     }
     
-    room.currentQuestionIndex = nextIndex
-    room.currentAnswers = {}
-    room.timeLeft = room.questions[nextIndex].time
-    room.gamePhase = 'waiting'
-    
-    return room
-  }
-
-  togglePause(roomCode) {
-    const room = this.getRoom(roomCode)
-    if (!room) return
-    room.isPaused = !room.isPaused
+    return {
+      player,
+      correctAnswer: question ? question.correctIndex : 0,
+      correctAnswerText: question ? question.answers[question.correctIndex] : '',
+      isFinished: player.finished,
+      allFinished,
+    }
   }
 
   getRanking(roomCode) {
@@ -183,37 +197,34 @@ class GameManager {
     const room = this.getRoom(roomCode)
     if (!room) return null
     
-    const question = this.getCurrentQuestion(roomCode)
-    
     return {
       roomCode: room.code,
       gamePhase: room.gamePhase,
-      currentQuestionIndex: room.currentQuestionIndex,
       totalQuestions: room.totalQuestions,
-      players: room.players,
-      playersAnswered: Object.keys(room.currentAnswers).length,
-      totalPlayers: room.players.length,
-      timeLeft: room.timeLeft,
-      isPaused: room.isPaused,
-      currentQuestion: question ? {
-        id: question.id,
-        difficulty: question.difficulty,
-        question: question.question,
-        answers: question.answers,
-        time: question.time,
-      } : null,
+      players: room.players.map(p => ({
+        id: p.id,
+        socketId: p.socketId,
+        name: p.name,
+        initial: p.initial,
+        color: p.color,
+        score: p.score,
+        correct: p.correct,
+        total: p.total,
+        passed: p.passed,
+        ready: p.ready,
+        finished: p.finished,
+        currentQuestionIndex: p.currentQuestionIndex,
+      })),
       ranking: this.getRanking(roomCode),
-      currentAnswers: room.currentAnswers,
     }
   }
 }
 
-// Nettoyage des rooms inactives toutes les 30 minutes
 const manager = new GameManager()
 setInterval(() => {
   const now = Date.now()
   for (const [code, room] of manager.rooms) {
-    if (now - room.createdAt > 2 * 60 * 60 * 1000) { // 2 heures
+    if (now - room.createdAt > 3 * 60 * 60 * 1000) {
       manager.deleteRoom(code)
     }
   }
