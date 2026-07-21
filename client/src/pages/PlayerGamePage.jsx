@@ -67,7 +67,7 @@ function PlayerGamePage() {
     setSelectedAnswer(index)
     setHasAnswered(true)
     
-    const isCorrect = submitAnswer(currentPlayer.id, index)
+    const isCorrect = submitAnswer(index)
     setResultType(isCorrect ? 'correct' : 'wrong')
     
     setTimeout(() => {
@@ -89,7 +89,7 @@ function PlayerGamePage() {
     setHasAnswered(true)
     setResultType('passed')
     setShowPassConfirm(false)
-    passQuestion(currentPlayer.id)
+    passQuestion()
     
     setTimeout(() => {
       navigate(`/play/${roomCode}/result`, { 

@@ -1,32 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 
 function HostLobbyPage() {
   const navigate = useNavigate()
   const { roomCode } = useParams()
-  const { players, startGame, addPlayer } = useGame()
+  const { players, startGame } = useGame()
   const [showCancelModal, setShowCancelModal] = useState(false)
-
-  // Simulation : ajoute des joueurs factices pour la démo
-  useEffect(() => {
-    const mockPlayers = [
-      { id: 101, name: 'Alice', initial: 'A', color: 'bg-primary text-on-primary', score: 0, correct: 0, total: 0, passed: 0, ready: true },
-      { id: 102, name: 'Bob', initial: 'B', color: 'bg-tertiary text-on-tertiary', score: 0, correct: 0, total: 0, passed: 0, ready: true },
-      { id: 103, name: 'Charlie', initial: 'C', color: 'bg-secondary text-on-secondary', score: 0, correct: 0, total: 0, passed: 0, ready: false },
-      { id: 104, name: 'Diana', initial: 'D', color: 'bg-tertiary-container text-on-tertiary', score: 0, correct: 0, total: 0, passed: 0, ready: true },
-      { id: 105, name: 'Eve', initial: 'E', color: 'bg-primary-container text-on-primary-container', score: 0, correct: 0, total: 0, passed: 0, ready: true },
-    ]
-
-    // Vérifie si les joueurs sont déjà ajoutés
-    if (players.length === 0) {
-      mockPlayers.forEach((player, index) => {
-        setTimeout(() => {
-          addPlayer(player)
-        }, (index + 1) * 600)
-      })
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const playerCount = players.length
   const canStart = playerCount >= 2
@@ -73,7 +53,7 @@ function HostLobbyPage() {
                 </span>
               </div>
               <p className="font-body-md text-body-md text-on-surface-variant mt-3">
-                Scannez le QR code ou entrez ce code sur le site
+                Va sur <strong>quizblast-mauve.vercel.app</strong> et entre ce code
               </p>
             </div>
 
@@ -89,11 +69,6 @@ function HostLobbyPage() {
             </div>
 
           </div>
-
-          <button className="w-full mt-6 bg-surface border border-outline-variant text-on-surface px-6 py-3 rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
-            <span className="material-symbols-outlined">content_copy</span>
-            Copier le lien d'invitation
-          </button>
         </div>
 
         {/* Liste des joueurs */}
@@ -110,6 +85,9 @@ function HostLobbyPage() {
               <p className="font-body-lg text-body-lg text-on-surface-variant">
                 En attente de joueurs...
               </p>
+              <p className="font-body-md text-body-md text-on-surface-variant mt-2">
+                Les joueurs doivent entrer le code <strong>{roomCode}</strong> sur leur téléphone
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -118,8 +96,8 @@ function HostLobbyPage() {
                   key={player.id}
                   className="bg-surface-container-low border border-outline-variant rounded-xl p-4 flex flex-col items-center gap-3 transition-all hover:shadow-sm"
                 >
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center font-display-md text-display-md shadow-sm relative ${player.color}`}>
-                    {player.initial}
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center font-display-md text-display-md shadow-sm relative ${player.color || 'bg-primary text-on-primary'}`}>
+                    {player.initial || '?'}
                     {player.ready && (
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-secondary rounded-full flex items-center justify-center border-2 border-surface">
                         <span className="material-symbols-outlined text-on-secondary text-sm">check</span>

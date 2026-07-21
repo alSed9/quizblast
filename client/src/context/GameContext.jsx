@@ -1,97 +1,176 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import socket from '../services/socketService'
 
 const GameContext = createContext()
-
-// Questions simulées pour le développement
-const MOCK_QUESTIONS = [
-  {
-    id: 1,
-    difficulty: 'Facile',
-    question: 'Quelle est la capitale de la France ?',
-    answers: ['Londres', 'Paris', 'Berlin', 'Madrid'],
-    correctIndex: 1,
-    time: 15,
-  },
-  {
-    id: 2,
-    difficulty: 'Facile',
-    question: 'Combien de continents y a-t-il sur Terre ?',
-    answers: ['5', '6', '7', '8'],
-    correctIndex: 2,
-    time: 15,
-  },
-  {
-    id: 3,
-    difficulty: 'Moyen',
-    question: 'Quelle est la capitale du Brésil ?',
-    answers: ['Rio de Janeiro', 'São Paulo', 'Brasília', 'Salvador'],
-    correctIndex: 2,
-    time: 20,
-  },
-  {
-    id: 4,
-    difficulty: 'Moyen',
-    question: 'En quelle année a eu lieu la Révolution française ?',
-    answers: ['1789', '1799', '1769', '1804'],
-    correctIndex: 0,
-    time: 20,
-  },
-  {
-    id: 5,
-    difficulty: 'Difficile',
-    question: 'Quel est le plus grand désert du monde ?',
-    answers: ['Sahara', 'Gobi', 'Antarctique', 'Kalahari'],
-    correctIndex: 2,
-    time: 25,
-  },
-  {
-    id: 6,
-    difficulty: 'Difficile',
-    question: 'Qui a peint le plafond de la Chapelle Sixtine ?',
-    answers: ['Léonard de Vinci', 'Raphaël', 'Michel-Ange', 'Donatello'],
-    correctIndex: 2,
-    time: 25,
-  },
-  {
-    id: 7,
-    difficulty: 'Expert',
-    question: 'Quel élément chimique a pour symbole "W" ?',
-    answers: ['Wolfram', 'Tungstène', 'Les deux', 'Aucun'],
-    correctIndex: 2,
-    time: 30,
-  },
-  {
-    id: 8,
-    difficulty: 'Expert',
-    question: 'Quelle est la constante de Planck ?',
-    answers: ['6,626 × 10⁻³⁴ J·s', '3,00 × 10⁸ m/s', '9,81 m/s²', '1,602 × 10⁻¹⁹ C'],
-    correctIndex: 0,
-    time: 30,
-  },
-]
 
 export function GameProvider({ children }) {
   // État de la partie
   const [roomCode, setRoomCode] = useState(null)
   const [isHost, setIsHost] = useState(false)
-  const [gamePhase, setGamePhase] = useState('idle') // idle | lobby | playing | result | waiting | final
-  
-  // Configuration
+  const [gamePhase, setGamePhase] = useState('idle')
   const [totalQuestions, setTotalQuestions] = useState(10)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  // eslint-disable-next-line no-unused-vars
   const [questions, setQuestions] = useState([])
-  
-  // Joueurs
   const [players, setPlayers] = useState([])
   const [currentPlayer, setCurrentPlayer] = useState(null)
-  
-  // Réponses en cours
   const [currentAnswers, setCurrentAnswers] = useState({})
   const [playersAnswered, setPlayersAnswered] = useState(0)
-  
-  // Timer
   const [timeLeft, setTimeLeft] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [currentQuestion, setCurrentQuestion] = useState(null)
+  const [error, setError] = useState(null)
+
+  // Connexion Socket.io
+  useEffect(() => {
+    socket.connect()
+
+    socket.on('connect', () => {
+      console.log('✅ Connecté au serveur:', socket.id)
+    })
+
+    socket.on('disconnect', () => {
+      console.log('❌ Déconnecté du serveur')
+    })
+
+    // HÔTE : Room créée
+    socket.on('room-created', (roomState) => {
+      console.log('🏠 Room créée:', roomState)
+      // eslint-disable-next-line react-hooks/immutability
+      updateStateFromServer(roomState)
+    })
+
+    // JOUEUR : A rejoint la room
+    socket.on('joined-room', ({ player, roomState }) => {
+      console.log('👤 A rejoint:', player)
+      setCurrentPlayer(player)
+       
+      updateStateFromServer(roomState)
+    })
+
+    // Mise à jour de la room
+    socket.on('room-update', (roomState) => {
+       
+      updateStateFromServer(roomState)
+    })
+
+    // Partie démarrée
+    socket.on('game-started', (roomState) => {
+       
+      updateStateFromServer(roomState)
+    })
+
+    // Mise à jour des joueurs ayant répondu
+    // eslint-disable-next-line no-unused-vars
+    socket.on('players-answered-update', ({ playersAnswered: answered, totalPlayers }) => {
+      setPlayersAnswered(answered)
+    })
+
+    // Résultat de la réponse du joueur
+    // eslint-disable-next-line no-unused-vars
+    socket.on('answer-result', ({ isCorrect, player }) => {
+      if (player) setCurrentPlayer(player)
+    })
+
+    // Question passée
+    socket.on('question-passed', () => {
+      // Rien de spécial
+    })
+
+    // Tout le monde a répondu
+    socket.on('all-answered', (roomState) => {
+      updateStateFromServer(roomState)
+    })
+
+    // Timer update
+    socket.on('timer-update', ({ timeLeft: time }) => {
+      setTimeLeft(time)
+    })
+
+    // Temps écoulé
+    socket.on('time-up', (roomState) => {
+      updateStateFromServer(roomState)
+    })
+
+    // Pause toggled
+    socket.on('pause-toggled', (roomState) => {
+      setIsPaused(roomState.isPaused)
+    })
+
+    // Question suivante
+    socket.on('next-question-started', (roomState) => {
+      updateStateFromServer(roomState)
+    })
+
+    // Question en direct
+    socket.on('question-live', (roomState) => {
+      updateStateFromServer(roomState)
+    })
+
+    // Partie terminée
+    socket.on('game-ended', ({ ranking }) => {
+      setGamePhase('final')
+      setPlayers(ranking || [])
+    })
+
+    // Question passée par l'hôte
+    socket.on('question-skipped', (roomState) => {
+      updateStateFromServer(roomState)
+    })
+
+    // Erreurs
+    socket.on('error', ({ message }) => {
+      setError(message)
+      console.error('Erreur serveur:', message)
+    })
+
+    return () => {
+      socket.off('connect')
+      socket.off('disconnect')
+      socket.off('room-created')
+      socket.off('joined-room')
+      socket.off('room-update')
+      socket.off('game-started')
+      socket.off('players-answered-update')
+      socket.off('answer-result')
+      socket.off('question-passed')
+      socket.off('all-answered')
+      socket.off('timer-update')
+      socket.off('time-up')
+      socket.off('pause-toggled')
+      socket.off('next-question-started')
+      socket.off('question-live')
+      socket.off('game-ended')
+      socket.off('question-skipped')
+      socket.off('error')
+      socket.disconnect()
+    }
+  }, [])
+
+  // Mettre à jour l'état depuis le serveur
+  const updateStateFromServer = (roomState) => {
+    if (!roomState) return
+    
+    setGamePhase(roomState.gamePhase)
+    setCurrentQuestionIndex(roomState.currentQuestionIndex)
+    setTotalQuestions(roomState.totalQuestions)
+    setPlayers(roomState.players || [])
+    setPlayersAnswered(roomState.playersAnswered || 0)
+    setTimeLeft(roomState.timeLeft || 0)
+    setIsPaused(roomState.isPaused || false)
+    
+    if (roomState.currentQuestion) {
+      setCurrentQuestion(roomState.currentQuestion)
+    }
+    
+    if (roomState.currentAnswers) {
+      setCurrentAnswers(roomState.currentAnswers)
+    }
+    
+    if (roomState.ranking) {
+      setPlayers(roomState.ranking)
+    }
+  }
 
   // Créer une partie (Hôte)
   const createGame = useCallback((questionCount) => {
@@ -100,10 +179,12 @@ export function GameProvider({ children }) {
     setIsHost(true)
     setTotalQuestions(questionCount)
     setGamePhase('lobby')
+    setError(null)
     
-    // Sélectionne les questions
-    const selectedQuestions = MOCK_QUESTIONS.slice(0, questionCount)
-    setQuestions(selectedQuestions)
+    socket.emit('create-room', { 
+      roomCode: code, 
+      totalQuestions: questionCount 
+    })
     
     return code
   }, [])
@@ -112,141 +193,54 @@ export function GameProvider({ children }) {
   const joinGame = useCallback((code, playerInfo) => {
     setRoomCode(code)
     setIsHost(false)
-    setCurrentPlayer(playerInfo)
-    setGamePhase('waiting')
+    setError(null)
     
-    // Dans la vraie app, on enverrait ça au serveur
-    const newPlayer = {
-      id: Date.now(),
-      ...playerInfo,
-      score: 0,
-      correct: 0,
-      total: 0,
-      passed: 0,
-      ready: false,
-    }
-    setPlayers(prev => [...prev, newPlayer])
-    setCurrentPlayer(newPlayer)
+    socket.emit('join-room', {
+      roomCode: code,
+      player: {
+        name: playerInfo.name,
+        initial: playerInfo.initial,
+        color: playerInfo.color,
+      }
+    })
     
-    return newPlayer
-  }, [])
-
-  // Ajouter un joueur (côté hôte, simulé)
-  const addPlayer = useCallback((player) => {
-    setPlayers(prev => [...prev, player])
+    return true
   }, [])
 
   // Marquer un joueur comme prêt
-  const toggleReady = useCallback((playerId) => {
-    setPlayers(prev => prev.map(p => 
-      p.id === playerId ? { ...p, ready: !p.ready } : p
-    ))
-  }, [])
+  const toggleReady = useCallback(() => {
+    socket.emit('toggle-ready', { roomCode })
+  }, [roomCode])
 
-  // Démarrer le jeu
+  // Démarrer le jeu (Hôte)
   const startGame = useCallback(() => {
-    setCurrentQuestionIndex(0)
-    setGamePhase('playing')
-    setCurrentAnswers({})
-    setPlayersAnswered(0)
-    
-    const firstQuestion = questions[0]
-    if (firstQuestion) {
-      setTimeLeft(firstQuestion.time)
-    }
-  }, [questions])
+    socket.emit('start-game', { roomCode })
+  }, [roomCode])
 
-  // Soumettre une réponse
-  const submitAnswer = useCallback((playerId, answerIndex) => {
-    const question = questions[currentQuestionIndex]
-    if (!question) return
-    
-    const isCorrect = answerIndex === question.correctIndex
-    const timeTaken = question.time - timeLeft
-    
-    setCurrentAnswers(prev => ({
-      ...prev,
-      [playerId]: {
-        answerIndex,
-        isCorrect,
-        timeTaken,
-        answered: true,
-      }
-    }))
-    
-    setPlayersAnswered(prev => prev + 1)
-    
-    // Met à jour le score du joueur
-    if (isCorrect) {
-      setPlayers(prev => prev.map(p => 
-        p.id === playerId 
-          ? { ...p, score: p.score + 10, correct: p.correct + 1, total: p.total + 1 }
-          : p
-      ))
-    } else {
-      setPlayers(prev => prev.map(p => 
-        p.id === playerId 
-          ? { ...p, total: p.total + 1 }
-          : p
-      ))
-    }
-    
-    return isCorrect
-  }, [questions, currentQuestionIndex, timeLeft])
+  // Soumettre une réponse (Joueur)
+  const submitAnswer = useCallback((answerIndex) => {
+    socket.emit('submit-answer', { roomCode, answerIndex })
+  }, [roomCode])
 
-  // Passer une question (joueur)
-  const passQuestion = useCallback((playerId) => {
-    setCurrentAnswers(prev => ({
-      ...prev,
-      [playerId]: {
-        answerIndex: -1,
-        isCorrect: false,
-        timeTaken: 0,
-        answered: true,
-        passed: true,
-      }
-    }))
-    
-    setPlayersAnswered(prev => prev + 1)
-    
-    setPlayers(prev => prev.map(p => 
-      p.id === playerId 
-        ? { ...p, passed: p.passed + 1, total: p.total + 1 }
-        : p
-    ))
-  }, [])
+  // Passer une question (Joueur)
+  const passQuestion = useCallback(() => {
+    socket.emit('pass-question', { roomCode })
+  }, [roomCode])
 
-  // Question suivante
+  // Question suivante (Hôte)
   const nextQuestion = useCallback(() => {
-    const nextIndex = currentQuestionIndex + 1
-    
-    if (nextIndex >= questions.length) {
-      // Fin du jeu
-      setGamePhase('final')
-      return
-    }
-    
-    setCurrentQuestionIndex(nextIndex)
-    setGamePhase('waiting')
-    setCurrentAnswers({})
-    setPlayersAnswered(0)
-    
-    // Après un délai, passe à la question
-    setTimeout(() => {
-      setGamePhase('playing')
-      setTimeLeft(questions[nextIndex].time)
-    }, 3000)
-  }, [currentQuestionIndex, questions])
+    socket.emit('next-question', { roomCode })
+  }, [roomCode])
 
-  // Pause/Reprendre
+  // Pause/Reprendre (Hôte)
   const togglePause = useCallback(() => {
-    setIsPaused(prev => !prev)
-  }, [])
+    socket.emit('toggle-pause', { roomCode })
+  }, [roomCode])
 
-  // Passer une question (hôte)
+  // Passer une question (Hôte)
   const skipQuestion = useCallback(() => {
-    nextQuestion()
-  }, [nextQuestion])
+    socket.emit('skip-question', { roomCode })
+  }, [roomCode])
 
   // Réinitialiser la partie
   const resetGame = useCallback(() => {
@@ -260,6 +254,8 @@ export function GameProvider({ children }) {
     setPlayersAnswered(0)
     setTimeLeft(0)
     setIsPaused(false)
+    setCurrentQuestion(null)
+    setError(null)
   }, [])
 
   // Obtenir le classement
@@ -269,8 +265,8 @@ export function GameProvider({ children }) {
 
   // Obtenir la question actuelle
   const getCurrentQuestion = useCallback(() => {
-    return questions[currentQuestionIndex] || null
-  }, [questions, currentQuestionIndex])
+    return currentQuestion
+  }, [currentQuestion])
 
   const value = {
     // État
@@ -286,11 +282,11 @@ export function GameProvider({ children }) {
     playersAnswered,
     timeLeft,
     isPaused,
+    error,
     
     // Actions
     createGame,
     joinGame,
-    addPlayer,
     toggleReady,
     startGame,
     submitAnswer,
@@ -299,7 +295,6 @@ export function GameProvider({ children }) {
     togglePause,
     skipQuestion,
     resetGame,
-    setTimeLeft,
     
     // Utilitaires
     getRanking,
