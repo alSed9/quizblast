@@ -13,6 +13,7 @@ import HostGamePage from './pages/HostGamePage'
 import HostResultPage from './pages/HostResultPage'
 import HostFinalPage from './pages/HostFinalPage'
 import NotFoundPage from './pages/NotFoundPage'
+import PlayerWaitingFinalPage from './pages/PlayerWaitingFinalPage'
 
 function App() {
   return (
@@ -36,6 +37,8 @@ function App() {
         <Route path="/play/:roomCode/result" element={<PlayerResultPage />} />
         <Route path="/play/:roomCode/waiting" element={<PlayerWaitingNextPage />} />
         <Route path="/play/:roomCode/final" element={<PlayerFinalPage />} />
+        <Route path="/play/:roomCode/waiting-final" element={<PlayerWaitingFinalPage />} />
+
         
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
