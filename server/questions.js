@@ -2,188 +2,188 @@ const questions = [
   // ==================== FACILE (questions 1-8) ====================
   {
     id: 1, difficulty: 'Facile', time: 15,
-    question: 'Quel est le sport le plus populaire au monde ?',
-    answers: ['Basketball', 'Tennis', 'Football', 'Cricket'],
-    correctIndex: 2
+    question: 'Quelle est la monnaie officielle du Bénin ?',
+    answers: ['Franc CFA', 'Naira', 'Cedi', 'Dollar'],
+    correctIndex: 0
   },
   {
     id: 2, difficulty: 'Facile', time: 15,
-    question: 'Dans quel pays se trouve la ville de Cotonou ?',
-    answers: ['Togo', 'Nigeria', 'Bénin', 'Ghana'],
+    question: 'Combien de couleurs y a-t-il dans un arc-en-ciel ?',
+    answers: ['5', '6', '7', '8'],
     correctIndex: 2
   },
   {
     id: 3, difficulty: 'Facile', time: 15,
-    question: 'Combien de planètes y a-t-il dans le système solaire ?',
-    answers: ['7', '8', '9', '10'],
-    correctIndex: 1
+    question: 'Quel est le réseau social le plus utilisé dans le monde ?',
+    answers: ['Twitter', 'Instagram', 'Facebook', 'TikTok'],
+    correctIndex: 2
   },
   {
     id: 4, difficulty: 'Facile', time: 15,
-    question: 'Dans Dragon Ball Z, comment s\'appelle le fils de Goku ?',
-    answers: ['Goten', 'Gohan', 'Trunks', 'Vegeta'],
+    question: 'Qui chante "Blinding Lights" ?',
+    answers: ['Drake', 'The Weeknd', 'Bruno Mars', 'Ed Sheeran'],
     correctIndex: 1
   },
   {
     id: 5, difficulty: 'Facile', time: 15,
-    question: 'Quel est le plus grand océan du monde ?',
-    answers: ['Atlantique', 'Indien', 'Pacifique', 'Arctique'],
-    correctIndex: 2
-  },
-  {
-    id: 6, difficulty: 'Facile', time: 15,
-    question: 'Qui a inventé l\'ampoule électrique ?',
-    answers: ['Nikola Tesla', 'Thomas Edison', 'Alexander Graham Bell', 'Albert Einstein'],
+    question: 'Dans One Piece, comment s\'appelle le chapeau de Luffy ?',
+    answers: ['Chapeau de soleil', 'Chapeau de paille', 'Chapeau rouge', 'Chapeau du pirate'],
     correctIndex: 1
   },
   {
+    id: 6, difficulty: 'Facile', time: 15,
+    question: 'Quel pays organise la Coupe du Monde 2026 ?',
+    answers: ['Qatar', 'France', 'USA-Canada-Mexique', 'Brésil'],
+    correctIndex: 2
+  },
+  {
     id: 7, difficulty: 'Facile', time: 15,
-    question: 'Quel animal est surnommé "le roi de la jungle" ?',
-    answers: ['Tigre', 'Lion', 'Éléphant', 'Ours'],
+    question: 'Quel est le fruit le plus consommé au monde ?',
+    answers: ['Pomme', 'Banane', 'Orange', 'Mangue'],
     correctIndex: 1
   },
   {
     id: 8, difficulty: 'Facile', time: 15,
-    question: 'Dans Naruto, quel est le nom du démon renard scellé en lui ?',
-    answers: ['Shukaku', 'Matatabi', 'Kurama', 'Gyuki'],
-    correctIndex: 2
+    question: 'Que signifie "Wi-Fi" ?',
+    answers: ['Wireless Finder', 'Wireless Fidelity', 'Wide Frequency', 'Wired Fiber'],
+    correctIndex: 1
   },
 
   // ==================== MOYEN (questions 9-16) ====================
   {
     id: 9, difficulty: 'Moyen', time: 20,
-    question: 'En quelle année le Bénin a-t-il obtenu son indépendance ?',
-    answers: ['1958', '1960', '1962', '1965'],
+    question: 'Quel pays africain est surnommé "le géant d\'Afrique" ?',
+    answers: ['Afrique du Sud', 'Nigeria', 'Égypte', 'RD Congo'],
     correctIndex: 1
   },
   {
     id: 10, difficulty: 'Moyen', time: 20,
-    question: 'Quel était le nom du Bénin avant 1975 ?',
-    answers: ['Dahomey', 'Haute-Volta', 'Gold Coast', 'Soudan français'],
-    correctIndex: 0
+    question: 'Qui a fondé l\'empire du Mali au 13ème siècle ?',
+    answers: ['Mansa Moussa', 'Soundiata Keïta', 'Askia Mohammed', 'Sonni Ali'],
+    correctIndex: 1
   },
   {
     id: 11, difficulty: 'Moyen', time: 20,
-    question: 'Qui a réalisé le film "Black Panther" ?',
-    answers: ['Spike Lee', 'Ryan Coogler', 'Ava DuVernay', 'Jordan Peele'],
+    question: 'Dans quel film Marvel apparaît Black Panther pour la première fois ?',
+    answers: ['Avengers', 'Captain America: Civil War', 'Iron Man 3', 'Thor Ragnarok'],
     correctIndex: 1
   },
   {
     id: 12, difficulty: 'Moyen', time: 20,
-    question: 'Quelle série met en scène un professeur de chimie qui devient trafiquant ?',
-    answers: ['Narcos', 'Breaking Bad', 'Ozark', 'The Wire'],
+    question: 'Quel est le vrai nom de l\'artiste Burna Boy ?',
+    answers: ['David Adeleke', 'Damini Ogulu', 'Ayodeji Balogun', 'Ahmed Ololade'],
     correctIndex: 1
   },
   {
     id: 13, difficulty: 'Moyen', time: 20,
-    question: 'Quel artiste nigérian chante "Essence" avec Wizkid ?',
-    answers: ['Burna Boy', 'Davido', 'Tems', 'Mr Eazi'],
+    question: 'Quel gaz les plantes absorbent-elles pour la photosynthèse ?',
+    answers: ['Oxygène', 'Azote', 'Dioxyde de carbone', 'Hydrogène'],
     correctIndex: 2
   },
   {
     id: 14, difficulty: 'Moyen', time: 20,
-    question: 'Quel est le plus grand pays d\'Afrique en superficie ?',
-    answers: ['Nigeria', 'Algérie', 'RD Congo', 'Soudan'],
+    question: 'Qui a remporté la CAN 2023 (Coupe d\'Afrique des Nations) ?',
+    answers: ['Nigeria', 'Côte d\'Ivoire', 'Sénégal', 'Maroc'],
     correctIndex: 1
   },
   {
     id: 15, difficulty: 'Moyen', time: 20,
-    question: 'Dans Game of Thrones, quel est le surnom de Daenerys Targaryen ?',
-    answers: ['La Reine de la Nuit', 'La Mère des Dragons', 'La Dame de Fer', 'La Princesse Rouge'],
+    question: 'Quelle série a battu le record d\'audience Netflix avec "Mercredi" ?',
+    answers: ['Stranger Things', 'Wednesday', 'La Casa de Papel', 'Bridgerton'],
     correctIndex: 1
   },
   {
     id: 16, difficulty: 'Moyen', time: 20,
-    question: 'Quel est l\'organe le plus grand du corps humain ?',
-    answers: ['Le foie', 'Le cerveau', 'La peau', 'Les poumons'],
+    question: 'Quel instrument de musique est associé au reggae ?',
+    answers: ['Piano', 'Guitare électrique', 'Basse', 'Batterie'],
     correctIndex: 2
   },
 
   // ==================== DIFFICILE (questions 17-24) ====================
   {
     id: 17, difficulty: 'Difficile', time: 25,
-    question: 'Qui était le premier président du Ghana indépendant ?',
-    answers: ['Nelson Mandela', 'Kwame Nkrumah', 'Julius Nyerere', 'Patrice Lumumba'],
+    question: 'Quelle est la capitale économique de la Côte d\'Ivoire ?',
+    answers: ['Yamoussoukro', 'Abidjan', 'Bouaké', 'San Pedro'],
     correctIndex: 1
   },
   {
     id: 18, difficulty: 'Difficile', time: 25,
-    question: 'Quel empire africain était dirigé par Soundiata Keïta ?',
-    answers: ['Empire Songhaï', 'Empire du Ghana', 'Empire du Mali', 'Empire du Bénin'],
-    correctIndex: 2
-  },
-  {
-    id: 19, difficulty: 'Difficile', time: 25,
-    question: 'Quelle est la plus grande lune de Saturne ?',
-    answers: ['Europa', 'Titan', 'Ganymède', 'Callisto'],
+    question: 'Quel mathématicien a inventé le calcul différentiel en même temps que Newton ?',
+    answers: ['Descartes', 'Leibniz', 'Pascal', 'Euler'],
     correctIndex: 1
   },
   {
+    id: 19, difficulty: 'Difficile', time: 25,
+    question: 'Dans Demon Slayer, quel est le style de respiration de Tanjiro ?',
+    answers: ['Respiration de l\'eau', 'Respiration du feu', 'Respiration du soleil', 'Respiration du vent'],
+    correctIndex: 0
+  },
+  {
     id: 20, difficulty: 'Difficile', time: 25,
-    question: 'Qui a écrit "Things Fall Apart" (Le Monde s\'effondre) ?',
-    answers: ['Wole Soyinka', 'Chinua Achebe', 'Ngugi wa Thiong\'o', 'Léopold Sédar Senghor'],
+    question: 'Quel pays est le premier producteur mondial de cacao ?',
+    answers: ['Ghana', 'Côte d\'Ivoire', 'Brésil', 'Indonésie'],
     correctIndex: 1
   },
   {
     id: 21, difficulty: 'Difficile', time: 25,
-    question: 'Quel élément chimique a pour symbole "Au" ?',
-    answers: ['Argent', 'Aluminium', 'Or', 'Argon'],
-    correctIndex: 2
+    question: 'Que mesure l\'échelle de Richter ?',
+    answers: ['La vitesse du vent', 'L\'intensité des séismes', 'La température', 'La pression atmosphérique'],
+    correctIndex: 1
   },
   {
     id: 22, difficulty: 'Difficile', time: 25,
-    question: 'Quelle série Netflix a rendu célèbre "Le jeu du calmar" ?',
-    answers: ['Alice in Borderland', 'Squid Game', 'Hellbound', 'All of Us Are Dead'],
+    question: 'Qui a peint "Guernica" ?',
+    answers: ['Salvador Dalí', 'Pablo Picasso', 'Vincent van Gogh', 'Claude Monet'],
     correctIndex: 1
   },
   {
     id: 23, difficulty: 'Difficile', time: 25,
-    question: 'Combien de temps met la lumière du Soleil pour atteindre la Terre ?',
-    answers: ['~8 secondes', '~8 minutes', '~8 heures', '~8 jours'],
-    correctIndex: 1
+    question: 'Quel pays africain possède le plus de sites UNESCO ?',
+    answers: ['Égypte', 'Maroc', 'Afrique du Sud', 'Éthiopie'],
+    correctIndex: 0
   },
   {
     id: 24, difficulty: 'Difficile', time: 25,
-    question: 'Quel pays africain est surnommé "la perle de l\'Afrique" ?',
-    answers: ['Kenya', 'Tanzanie', 'Ouganda', 'Rwanda'],
-    correctIndex: 2
+    question: 'Quel est le composant principal du sable ?',
+    answers: ['Calcaire', 'Silice', 'Argile', 'Granit'],
+    correctIndex: 1
   },
 
   // ==================== EXPERT (questions 25-30) ====================
   {
     id: 25, difficulty: 'Expert', time: 30,
-    question: 'Quel scientifique a proposé la théorie de la relativité générale ?',
-    answers: ['Isaac Newton', 'Albert Einstein', 'Stephen Hawking', 'Niels Bohr'],
+    question: 'Quel royaume africain était dirigé par la reine Nzinga au 17ème siècle ?',
+    answers: ['Royaume du Kongo', 'Royaume Ndongo', 'Royaume du Bénin', 'Royaume Ashanti'],
     correctIndex: 1
   },
   {
     id: 26, difficulty: 'Expert', time: 30,
-    question: 'Dans quel pays se trouve le lac Assal, le point le plus bas d\'Afrique ?',
-    answers: ['Éthiopie', 'Djibouti', 'Érythrée', 'Somalie'],
+    question: 'Qu\'est-ce que le "Bug Bounty" en informatique ?',
+    answers: ['Un virus informatique', 'Une récompense pour trouver des failles', 'Un logiciel antivirus', 'Un navigateur web'],
     correctIndex: 1
   },
   {
     id: 27, difficulty: 'Expert', time: 30,
-    question: 'Quel pays africain a remporté le plus de Coupes d\'Afrique des Nations ?',
-    answers: ['Nigeria', 'Cameroun', 'Égypte', 'Ghana'],
-    correctIndex: 2
+    question: 'Dans l\'Attaque des Titans, quel est le vrai nom du Titan Assaillant ?',
+    answers: ['Reiner Braun', 'Eren Yeager', 'Armin Arlert', 'Zeke Yeager'],
+    correctIndex: 1
   },
   {
     id: 28, difficulty: 'Expert', time: 30,
-    question: 'Quel est le nombre d\'or approximatif (φ) ?',
-    answers: ['1,414', '1,618', '2,718', '3,142'],
+    question: 'Quelle ville abrite le siège de l\'Union Africaine ?',
+    answers: ['Nairobi', 'Addis-Abeba', 'Le Caire', 'Pretoria'],
     correctIndex: 1
   },
   {
     id: 29, difficulty: 'Expert', time: 30,
-    question: 'Quel est le fleuve le plus long d\'Afrique ?',
-    answers: ['Nil', 'Congo', 'Niger', 'Zambèze'],
-    correctIndex: 0
+    question: 'Combien d\'os possède un humain adulte ?',
+    answers: ['186', '206', '226', '256'],
+    correctIndex: 1
   },
   {
     id: 30, difficulty: 'Expert', time: 30,
-    question: 'Quel acteur a joué le rôle principal dans "The Pursuit of Happyness" ?',
-    answers: ['Denzel Washington', 'Will Smith', 'Jamie Foxx', 'Morgan Freeman'],
+    question: 'Quel philosophe a dit "Je pense, donc je suis" ?',
+    answers: ['Platon', 'René Descartes', 'Socrate', 'Aristote'],
     correctIndex: 1
   },
 ]
