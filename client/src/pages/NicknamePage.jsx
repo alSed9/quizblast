@@ -17,7 +17,7 @@ const avatarColors = [
 function NicknamePage() {
   const navigate = useNavigate()
   const { roomCode } = useParams()
-  const { joinGame } = useGame()
+  const { joinGame, error: gameError } = useGame()
   const [pseudo, setPseudo] = useState('')
   const [error, setError] = useState('')
   const [isJoining, setIsJoining] = useState(false)
@@ -39,18 +39,21 @@ function NicknamePage() {
     }
 
     setIsJoining(true)
+    setError('')
     
-    // Simule un délai de connexion
+    const playerInfo = {
+      name: trimmedPseudo,
+      initial: trimmedPseudo.charAt(0).toUpperCase(),
+      color: avatarColor,
+    }
+    
+    joinGame(roomCode, playerInfo)
+    
+    // Navigation après un court délai pour laisser le socket se connecter
     setTimeout(() => {
-      const playerInfo = {
-        name: trimmedPseudo,
-        initial: trimmedPseudo.charAt(0).toUpperCase(),
-        color: avatarColor,
-      }
-      joinGame(roomCode, playerInfo)
       setIsJoining(false)
       navigate(`/join/${roomCode}/waiting`)
-    }, 600)
+    }, 800)
   }
 
   const handleKeyDown = (e) => {
@@ -63,6 +66,8 @@ function NicknamePage() {
     const trimmed = pseudo.trim()
     return trimmed ? trimmed.charAt(0).toUpperCase() : '?'
   }
+
+  const displayError = error || gameError
 
   return (
     <div className="bg-background text-on-background min-h-screen font-body-lg flex flex-col">
@@ -124,7 +129,7 @@ function NicknamePage() {
               className={`
                 w-full px-4 py-4 rounded-xl font-body-lg text-body-lg
                 border-2 outline-none transition-all bg-surface
-                ${error 
+                ${displayError 
                   ? 'border-error focus:border-error' 
                   : 'border-outline-variant focus:border-primary text-on-surface'
                 }
@@ -134,8 +139,8 @@ function NicknamePage() {
             />
             
             <div className="flex justify-between items-center mt-2">
-              <p className={`font-body-md text-body-md ${error ? 'text-error' : 'text-on-surface-variant'}`}>
-                {error || '3 à 15 caractères'}
+              <p className={`font-body-md text-body-md ${displayError ? 'text-error' : 'text-on-surface-variant'}`}>
+                {displayError || '3 à 15 caractères'}
               </p>
               <p className="font-body-md text-body-md text-on-surface-variant">
                 {pseudo.trim().length}/15

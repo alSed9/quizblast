@@ -1,5 +1,3 @@
-// eslint-disable-next-line no-unused-vars
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { useTimer } from '../hooks/useTimer'
@@ -13,8 +11,7 @@ function HostGamePage() {
     playersAnswered, 
     players,
     getCurrentQuestion,
-    // eslint-disable-next-line no-unused-vars
-    nextQuestion,
+    skipQuestion,
     isPaused,
     togglePause,
   } = useGame()
@@ -32,6 +29,7 @@ function HostGamePage() {
   )
 
   const handleSkip = () => {
+    skipQuestion()
     navigate(`/host/${roomCode}/result`)
   }
 
@@ -50,7 +48,6 @@ function HostGamePage() {
     'Expert': 'bg-error-container text-on-error-container',
   }
 
-  // Joueurs ayant répondu (simulé pour l'affichage)
   const answeredAvatars = players.slice(0, Math.min(playersAnswered, 8))
 
   return (
@@ -77,7 +74,6 @@ function HostGamePage() {
 
       <main className="flex-grow flex flex-col items-center justify-center p-gutter-desktop relative z-10 max-w-max-width-host mx-auto w-full">
         
-        {/* Info partie */}
         <div className="w-full max-w-4xl flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
             <div className="bg-surface border border-outline-variant px-6 py-2 rounded-full shadow-sm">
@@ -104,14 +100,12 @@ function HostGamePage() {
           </div>
         </div>
 
-        {/* Question */}
         <div className="w-full max-w-4xl bg-surface border border-outline-variant rounded-2xl p-12 text-center mb-8 shadow-sm">
           <h1 className="font-display-lg text-display-lg text-on-surface">
             {question.question}
           </h1>
         </div>
 
-        {/* Réponses */}
         <div className="w-full max-w-4xl grid grid-cols-2 gap-6 mb-12">
           {question.answers.map((answer, index) => {
             const letters = ['A', 'B', 'C', 'D']
@@ -141,7 +135,6 @@ function HostGamePage() {
           })}
         </div>
 
-        {/* Barre de progression */}
         <div className="w-full max-w-4xl bg-surface border border-outline-variant rounded-xl p-6 shadow-sm flex items-center justify-between">
           <div className="flex items-center gap-4 w-1/2">
             <div className="w-full h-4 bg-surface-container-high rounded-full overflow-hidden">
@@ -157,8 +150,8 @@ function HostGamePage() {
 
           <div className="flex -space-x-3">
             {answeredAvatars.map((player) => (
-              <div key={player.id} className={`w-10 h-10 rounded-full border-2 border-surface flex items-center justify-center font-label-sm text-label-sm relative ${player.color || 'bg-primary text-on-primary'}`}>
-                {player.initial || player.name?.charAt(0)}
+              <div key={player.id || player.socketId} className={`w-10 h-10 rounded-full border-2 border-surface flex items-center justify-center font-label-sm text-label-sm relative ${player.color || 'bg-primary text-on-primary'}`}>
+                {player.initial || player.name?.charAt(0) || '?'}
                 <div className="absolute inset-0 bg-secondary/80 rounded-full flex items-center justify-center">
                   <span className="material-symbols-outlined text-on-secondary text-sm">check</span>
                 </div>

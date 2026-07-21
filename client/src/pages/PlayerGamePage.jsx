@@ -15,28 +15,28 @@ function PlayerGamePage() {
     submitAnswer,
     passQuestion,
     isPaused,
+    timeLeft: serverTimeLeft,
   } = useGame()
 
   const [selectedAnswer, setSelectedAnswer] = useState(null)
   const [hasAnswered, setHasAnswered] = useState(false)
   const [showPassConfirm, setShowPassConfirm] = useState(false)
-  // eslint-disable-next-line no-unused-vars
-  const [resultType, setResultType] = useState(null) // 'correct' | 'wrong' | 'passed'
   
   const question = getCurrentQuestion()
 
   const handleTimeUp = () => {
     if (!hasAnswered) {
       setHasAnswered(true)
-      setResultType('timeout')
       setTimeout(() => {
-        navigate(`/play/${roomCode}/result`)
+        navigate(`/play/${roomCode}/result`, { 
+          state: { resultType: 'timeout' }
+        })
       }, 1000)
     }
   }
 
   const { timeLeft, isCritical, isTimeUp } = useTimer(
-    question?.time || 15,
+    question?.time || serverTimeLeft || 15,
     isPaused,
     handleTimeUp
   )
@@ -45,14 +45,13 @@ function PlayerGamePage() {
     if (isTimeUp && !hasAnswered) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasAnswered(true)
-      setResultType('timeout')
       setTimeout(() => {
         navigate(`/play/${roomCode}/result`, { 
           state: { resultType: 'timeout' }
         })
       }, 1000)
     }
-  }, [isTimeUp, hasAnswered, navigate, roomCode])
+  }, [hasAnswered, isTimeUp, navigate, roomCode])
 
   if (!currentPlayer || !question) {
     return (
@@ -67,15 +66,13 @@ function PlayerGamePage() {
     setSelectedAnswer(index)
     setHasAnswered(true)
     
-    const isCorrect = submitAnswer(index)
-    setResultType(isCorrect ? 'correct' : 'wrong')
+    submitAnswer(index)
     
     setTimeout(() => {
       navigate(`/play/${roomCode}/result`, { 
         state: { 
-          resultType: isCorrect ? 'correct' : 'wrong',
+          resultType: 'answered',
           selectedAnswer: index,
-          correctAnswer: question.correctIndex,
         }
       })
     }, 800)
@@ -87,7 +84,6 @@ function PlayerGamePage() {
 
   const confirmPass = () => {
     setHasAnswered(true)
-    setResultType('passed')
     setShowPassConfirm(false)
     passQuestion()
     
@@ -102,7 +98,7 @@ function PlayerGamePage() {
     setShowPassConfirm(false)
   }
 
-  const answers = question.answers
+  const answers = question.answers || []
   const answerLabels = ['A', 'B', 'C', 'D']
 
   const difficultyColors = {
@@ -115,7 +111,6 @@ function PlayerGamePage() {
   return (
     <div className="bg-background text-on-background min-h-screen font-body-lg flex flex-col">
       
-      {/* Header compact pour mobile */}
       <header className="w-full bg-surface shadow-sm border-b border-outline-variant px-gutter-mobile py-3 flex items-center justify-between shrink-0 z-50">
         <div className="bg-surface border border-outline-variant px-4 py-1 rounded-full">
           <span className="font-label-lg text-label-lg text-on-surface">
@@ -127,8 +122,8 @@ function PlayerGamePage() {
           {question.difficulty}
         </div>
         
-        <div className={`w-9 h-9 rounded-full flex items-center justify-center font-label-lg text-label-lg ${currentPlayer.color}`}>
-          {currentPlayer.initial}
+        <div className={`w-9 h-9 rounded-full flex items-center justify-center font-label-lg text-label-lg ${currentPlayer.color || 'bg-primary text-on-primary'}`}>
+          {currentPlayer.initial || '?'}
         </div>
       </header>
 
@@ -168,19 +163,17 @@ function PlayerGamePage() {
 
           <div className="bg-surface-container-low rounded-xl px-6 py-3">
             <span className="font-body-md text-body-md text-on-surface-variant">Score : </span>
-            <span className="font-headline-md text-headline-md text-on-surface">{currentPlayer.score} pts</span>
+            <span className="font-headline-md text-headline-md text-on-surface">{currentPlayer.score || 0} pts</span>
           </div>
 
         </div>
 
-        {/* Question en petit (rappel) */}
         <div className="bg-surface-container-low rounded-xl p-4 mb-4 text-center">
           <p className="font-body-md text-body-md text-on-surface-variant">
             Regarde la question sur l'écran principal 📺
           </p>
         </div>
 
-        {/* Boutons de réponse */}
         <div className="flex flex-col gap-4 mb-6">
           
           {answers.map((answer, index) => (
@@ -220,7 +213,6 @@ function PlayerGamePage() {
 
         </div>
 
-        {/* Bouton Passer */}
         <div className="flex flex-col items-center gap-4">
           
           {!hasAnswered && (
@@ -256,7 +248,6 @@ function PlayerGamePage() {
 
       </main>
 
-      {/* Modale confirmation Passer */}
       {showPassConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-surface rounded-2xl p-8 max-w-sm w-full shadow-lg text-center">

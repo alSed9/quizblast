@@ -6,13 +6,15 @@ function PlayerResultPage() {
   const navigate = useNavigate()
   const { roomCode } = useParams()
   const location = useLocation()
-  const { currentPlayer, getCurrentQuestion, gamePhase } = useGame()
+  const { currentPlayer, getCurrentQuestion, gamePhase, currentAnswers } = useGame()
   const [countdown, setCountdown] = useState(3)
 
-  const resultType = location.state?.resultType || 'timeout'
   const question = getCurrentQuestion()
+  
+  // Déterminer le type de résultat depuis le serveur
+  const myAnswer = currentPlayer ? currentAnswers[currentPlayer.socketId || currentPlayer.id] : null
+  const resultType = location.state?.resultType || (myAnswer?.passed ? 'passed' : myAnswer?.isCorrect ? 'correct' : myAnswer?.answered ? 'wrong' : 'timeout')
 
-  // Redirige vers la page d'attente ou finale
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown(prev => {
@@ -87,7 +89,15 @@ function PlayerResultPage() {
           points: '+0 point'
         }
       default:
-        return {}
+        return {
+          icon: 'help',
+          iconColor: 'text-on-surface-variant',
+          title: 'RÉSULTAT',
+          titleColor: 'text-on-surface-variant',
+          showAnswer: true,
+          correctAnswer: correctAnswerText,
+          points: '+0 point'
+        }
     }
   }
 
@@ -98,11 +108,11 @@ function PlayerResultPage() {
       
       <div className="w-full max-w-md bg-surface border border-outline-variant rounded-2xl p-8 md:p-10 shadow-sm text-center">
         
-        <span className={`material-symbols-outlined text-7xl ${result.iconColor} mb-4 block`}>
+        <span className={`material-symbols-outlined text-7xl ${result.iconColor || 'text-on-surface-variant'} mb-4 block`}>
           {result.icon}
         </span>
 
-        <h1 className={`font-display-md text-display-md ${result.titleColor} mb-4`}>
+        <h1 className={`font-display-md text-display-md ${result.titleColor || 'text-on-surface'} mb-4`}>
           {result.title}
         </h1>
 
@@ -136,10 +146,10 @@ function PlayerResultPage() {
             Score total
           </p>
           <p className="font-display-md text-display-md text-on-surface">
-            {currentPlayer.score} pts
+            {currentPlayer.score || 0} pts
           </p>
           <p className="font-body-md text-body-md text-on-surface-variant mt-2">
-            {currentPlayer.correct}/{currentPlayer.total} bonnes réponses
+            {currentPlayer.correct || 0}/{currentPlayer.total || 0} bonnes réponses
           </p>
         </div>
 

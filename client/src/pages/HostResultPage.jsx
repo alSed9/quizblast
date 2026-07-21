@@ -19,25 +19,19 @@ function HostResultPage() {
   const question = getCurrentQuestion()
   const isLastQuestion = currentQuestionIndex + 1 >= totalQuestions
 
-  // Statistiques
-  // eslint-disable-next-line no-unused-vars
-  const totalPlayers = players.length
   const correctCount = Object.values(currentAnswers).filter(a => a.isCorrect).length
   const wrongCount = Object.values(currentAnswers).filter(a => a.answered && !a.isCorrect && !a.passed).length
   const passedCount = Object.values(currentAnswers).filter(a => a.passed).length
 
-  // Top 3 rapidité
   const fastestPlayers = Object.entries(currentAnswers)
-    // eslint-disable-next-line no-unused-vars
-    .filter(([_, answer]) => answer.isCorrect)
-    // eslint-disable-next-line no-unused-vars
-    .sort(([_, a], [__, b]) => a.timeTaken - b.timeTaken)
+    .filter(([, answer]) => answer.isCorrect)
+    .sort(([, a], [, b]) => a.timeTaken - b.timeTaken)
     .slice(0, 3)
     .map(([playerId, answer]) => {
-      const player = players.find(p => p.id === parseInt(playerId))
+      const player = players.find(p => (p.id || p.socketId) === playerId || p.id === parseInt(playerId))
       return {
         ...player,
-        time: `${answer.timeTaken.toFixed(1)}s`
+        time: answer.timeTaken ? `${answer.timeTaken.toFixed(1)}s` : '?s'
       }
     })
 
@@ -86,14 +80,12 @@ function HostResultPage() {
           </h1>
         </div>
 
-        {/* Réponse correcte */}
         <div className="w-full max-w-4xl bg-secondary-container/30 border-2 border-secondary rounded-2xl p-8 mb-8 text-center">
           <span className="material-symbols-outlined text-6xl text-secondary mb-4 block">check_circle</span>
           <p className="font-body-lg text-body-lg text-on-secondary-container mb-2">La bonne réponse était :</p>
           <h2 className="font-display-lg text-display-lg text-secondary">{correctAnswerText}</h2>
         </div>
 
-        {/* Statistiques */}
         <div className="w-full max-w-4xl grid grid-cols-3 gap-6 mb-8">
           <div className="bg-surface border border-outline-variant rounded-xl p-6 text-center shadow-sm">
             <span className="material-symbols-outlined text-4xl text-secondary mb-3 block">check_circle</span>
@@ -112,7 +104,6 @@ function HostResultPage() {
           </div>
         </div>
 
-        {/* Top 3 rapidité */}
         {fastestPlayers.length > 0 && (
           <div className="w-full max-w-4xl bg-surface border border-outline-variant rounded-2xl p-8 shadow-sm mb-8">
             <h3 className="font-headline-md text-headline-md text-on-surface text-center mb-6">
@@ -120,7 +111,7 @@ function HostResultPage() {
             </h3>
             <div className="flex justify-center items-end gap-6">
               {fastestPlayers.map((player, index) => (
-                <div key={player?.id || index} className="flex flex-col items-center gap-3">
+                <div key={player?.id || player?.socketId || index} className="flex flex-col items-center gap-3">
                   <span className="font-display-md text-display-md">
                     {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
                   </span>
@@ -128,14 +119,13 @@ function HostResultPage() {
                     {player?.initial || '?'}
                   </div>
                   <span className="font-body-md text-body-md text-on-surface">{player?.name || '?'}</span>
-                  <span className="font-label-lg text-label-lg text-primary">{player?.time}</span>
+                  <span className="font-label-lg text-label-lg text-primary">{player?.time || '?s'}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Compte à rebours */}
         <div className="text-center">
           <p className="font-body-lg text-body-lg text-on-surface-variant mb-3">
             {isLastQuestion ? 'Classement final dans...' : 'Prochaine question dans...'}

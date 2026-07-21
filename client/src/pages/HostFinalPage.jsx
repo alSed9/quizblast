@@ -1,13 +1,10 @@
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 
 function HostFinalPage() {
   const navigate = useNavigate()
-  // eslint-disable-next-line no-unused-vars
-  const { roomCode } = useParams()
-  // eslint-disable-next-line no-unused-vars
-  const { players, getRanking, resetGame } = useGame()
+  const { getRanking, resetGame } = useGame()
   const [showQuitModal, setShowQuitModal] = useState(false)
 
   const ranking = getRanking()
@@ -31,7 +28,7 @@ function HostFinalPage() {
   if (ranking.length === 0) {
     return (
       <div className="bg-background min-h-screen flex items-center justify-center">
-        <p className="font-headline-md text-on-surface">Chargement...</p>
+        <p className="font-headline-md text-on-surface">Aucun joueur n'a participé</p>
       </div>
     )
   }
@@ -55,57 +52,52 @@ function HostFinalPage() {
           </p>
         </div>
 
-        {/* Podium Top 3 */}
         <div className="w-full max-w-4xl flex justify-center items-end gap-6 md:gap-10 mb-12">
           
-          {/* 2ème place */}
           {ranking[1] && (
             <div className="flex flex-col items-center gap-3">
-              <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center font-display-lg text-display-lg shadow-lg border-4 border-surface ${ranking[1].color}`}>
-                {ranking[1].initial}
+              <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center font-display-lg text-display-lg shadow-lg border-4 border-surface ${ranking[1].color || 'bg-primary text-on-primary'}`}>
+                {ranking[1].initial || '?'}
               </div>
               <span className="font-display-md text-display-md">🥈</span>
               <div className="bg-surface border border-outline-variant rounded-xl px-6 py-3 text-center shadow-sm">
                 <p className="font-headline-md text-headline-md text-on-surface">{ranking[1].name}</p>
-                <p className="font-display-md text-display-md text-primary">{ranking[1].score} pts</p>
-                <p className="font-body-md text-body-md text-on-surface-variant">{ranking[1].correct}/{ranking[1].total}</p>
+                <p className="font-display-md text-display-md text-primary">{ranking[1].score || 0} pts</p>
+                <p className="font-body-md text-body-md text-on-surface-variant">{ranking[1].correct || 0}/{ranking[1].total || 0}</p>
               </div>
             </div>
           )}
 
-          {/* 1ère place */}
           {ranking[0] && (
             <div className="flex flex-col items-center gap-3 -mt-8">
-              <div className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center font-display-lg text-display-lg shadow-xl border-4 border-tertiary ${ranking[0].color} ring-4 ring-tertiary/20`}>
-                {ranking[0].initial}
+              <div className={`w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center font-display-lg text-display-lg shadow-xl border-4 border-tertiary ${ranking[0].color || 'bg-primary text-on-primary'} ring-4 ring-tertiary/20`}>
+                {ranking[0].initial || '?'}
               </div>
               <span className="font-display-lg text-display-lg">🥇</span>
               <div className="bg-tertiary-container/10 border-2 border-tertiary rounded-xl px-8 py-4 text-center shadow-lg">
                 <p className="font-headline-lg text-headline-lg text-on-surface">{ranking[0].name}</p>
-                <p className="font-display-md text-display-md text-tertiary">{ranking[0].score} pts</p>
-                <p className="font-body-lg text-body-lg text-on-surface-variant">{ranking[0].correct}/{ranking[0].total}</p>
+                <p className="font-display-md text-display-md text-tertiary">{ranking[0].score || 0} pts</p>
+                <p className="font-body-lg text-body-lg text-on-surface-variant">{ranking[0].correct || 0}/{ranking[0].total || 0}</p>
               </div>
             </div>
           )}
 
-          {/* 3ème place */}
           {ranking[2] && (
             <div className="flex flex-col items-center gap-3">
-              <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center font-display-lg text-display-lg shadow-lg border-4 border-surface ${ranking[2].color}`}>
-                {ranking[2].initial}
+              <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center font-display-lg text-display-lg shadow-lg border-4 border-surface ${ranking[2].color || 'bg-primary text-on-primary'}`}>
+                {ranking[2].initial || '?'}
               </div>
               <span className="font-display-md text-display-md">🥉</span>
               <div className="bg-surface border border-outline-variant rounded-xl px-6 py-3 text-center shadow-sm">
                 <p className="font-headline-md text-headline-md text-on-surface">{ranking[2].name}</p>
-                <p className="font-display-md text-display-md text-primary">{ranking[2].score} pts</p>
-                <p className="font-body-md text-body-md text-on-surface-variant">{ranking[2].correct}/{ranking[2].total}</p>
+                <p className="font-display-md text-display-md text-primary">{ranking[2].score || 0} pts</p>
+                <p className="font-body-md text-body-md text-on-surface-variant">{ranking[2].correct || 0}/{ranking[2].total || 0}</p>
               </div>
             </div>
           )}
 
         </div>
 
-        {/* Classement complet */}
         <div className="w-full max-w-3xl bg-surface border border-outline-variant rounded-2xl p-6 md:p-8 shadow-sm mb-8">
           <h3 className="font-headline-md text-headline-md text-on-surface mb-6 text-center">
             Classement complet
@@ -114,7 +106,7 @@ function HostFinalPage() {
           <div className="space-y-3">
             {ranking.map((player, index) => (
               <div 
-                key={player.id}
+                key={player.id || player.socketId}
                 className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
                   index === 0 ? 'bg-tertiary-container/10 border border-tertiary/30' :
                   index === 1 ? 'bg-primary-container/10' :
@@ -126,8 +118,8 @@ function HostFinalPage() {
                   {index + 1}
                 </span>
 
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-label-lg text-label-lg ${player.color}`}>
-                  {player.initial}
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-label-lg text-label-lg ${player.color || 'bg-primary text-on-primary'}`}>
+                  {player.initial || '?'}
                 </div>
 
                 <span className="font-body-lg text-body-lg text-on-surface flex-1">
@@ -135,13 +127,13 @@ function HostFinalPage() {
                 </span>
 
                 <span className="font-headline-md text-headline-md text-on-surface">
-                  {player.score} pts
+                  {player.score || 0} pts
                 </span>
 
                 <div className="hidden md:block w-32 h-3 bg-surface-container-high rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-primary rounded-full transition-all"
-                    style={{ width: `${(player.score / maxScore) * 100}%` }}
+                    style={{ width: `${maxScore > 0 ? ((player.score || 0) / maxScore) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -149,7 +141,6 @@ function HostFinalPage() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="w-full max-w-3xl flex flex-col md:flex-row gap-4">
           <button
             onClick={handleNewGame}

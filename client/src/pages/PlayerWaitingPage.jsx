@@ -10,7 +10,6 @@ function PlayerWaitingPage() {
   const [isReady, setIsReady] = useState(false)
   const [showQuitModal, setShowQuitModal] = useState(false)
 
-  // Redirige quand le jeu démarre
   useEffect(() => {
     if (gamePhase === 'playing') {
       navigate(`/play/${roomCode}`)
@@ -19,9 +18,7 @@ function PlayerWaitingPage() {
 
   const handleToggleReady = () => {
     setIsReady(!isReady)
-    if (currentPlayer) {
-      toggleReady(currentPlayer.id)
-    }
+    toggleReady()
   }
 
   const handleQuit = () => {
@@ -46,9 +43,9 @@ function PlayerWaitingPage() {
           <div className={`
             w-28 h-28 rounded-full flex items-center justify-center
             font-display-lg text-display-lg shadow-sm mb-4
-            ${currentPlayer.color}
+            ${currentPlayer.color || 'bg-primary text-on-primary'}
           `}>
-            {currentPlayer.initial}
+            {currentPlayer.initial || '?'}
           </div>
           <h1 className="font-display-md text-display-md text-on-surface mb-2">
             {currentPlayer.name}
@@ -82,15 +79,14 @@ function PlayerWaitingPage() {
             </div>
           </div>
 
-          {/* Liste des joueurs en attente */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             {players.map((player) => (
               <div 
-                key={player.id}
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-label-lg text-label-lg relative ${player.color}`}
+                key={player.id || player.socketId}
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-label-lg text-label-lg relative ${player.color || 'bg-primary text-on-primary'}`}
                 title={player.name}
               >
-                {player.initial}
+                {player.initial || '?'}
                 {player.ready && (
                   <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-secondary rounded-full flex items-center justify-center border-2 border-surface">
                     <span className="material-symbols-outlined text-on-secondary text-xs">check</span>

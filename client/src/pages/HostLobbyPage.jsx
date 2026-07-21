@@ -1,20 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 
 function HostLobbyPage() {
   const navigate = useNavigate()
   const { roomCode } = useParams()
-  const { players, startGame } = useGame()
+  const { players, startGame, gamePhase } = useGame()
   const [showCancelModal, setShowCancelModal] = useState(false)
 
   const playerCount = players.length
   const canStart = playerCount >= 2
 
+  // Rediriger quand le jeu démarre (le serveur change gamePhase)
+  useEffect(() => {
+    if (gamePhase === 'playing') {
+      navigate(`/host/${roomCode}/game`)
+    }
+  }, [gamePhase, navigate, roomCode])
+
   const handleStartGame = () => {
     if (canStart) {
       startGame()
-      navigate(`/host/${roomCode}/game`)
+      // La navigation se fait via le useEffect quand gamePhase passe à 'playing'
     }
   }
 
@@ -39,7 +46,6 @@ function HostLobbyPage() {
 
       <main className="flex-grow flex flex-col items-center justify-center px-gutter-mobile md:px-gutter-desktop max-w-max-width-host mx-auto w-full py-8">
         
-        {/* Code PIN et QR Code */}
         <div className="w-full max-w-3xl bg-surface border border-outline-variant rounded-2xl p-8 md:p-10 shadow-sm mb-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             
@@ -71,7 +77,6 @@ function HostLobbyPage() {
           </div>
         </div>
 
-        {/* Liste des joueurs */}
         <div className="w-full max-w-3xl bg-surface border border-outline-variant rounded-2xl p-8 md:p-10 shadow-sm mb-8">
           <h2 className="font-headline-lg text-headline-lg text-on-surface mb-6 text-center">
             Joueurs connectés : {playerCount}/20
@@ -93,7 +98,7 @@ function HostLobbyPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {players.map((player) => (
                 <div 
-                  key={player.id}
+                  key={player.id || player.socketId}
                   className="bg-surface-container-low border border-outline-variant rounded-xl p-4 flex flex-col items-center gap-3 transition-all hover:shadow-sm"
                 >
                   <div className={`w-16 h-16 rounded-full flex items-center justify-center font-display-md text-display-md shadow-sm relative ${player.color || 'bg-primary text-on-primary'}`}>
@@ -116,7 +121,6 @@ function HostLobbyPage() {
           )}
         </div>
 
-        {/* Boutons d'action */}
         <div className="w-full max-w-3xl flex flex-col items-center gap-4">
           
           <button
