@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
-import { useTimer } from '../hooks/useTimer'
 
 function PlayerGamePage() {
   const navigate = useNavigate()
@@ -14,8 +13,8 @@ function PlayerGamePage() {
     getCurrentQuestion,
     submitAnswer,
     passQuestion,
+    timeLeft,
     isPaused,
-    timeLeft: serverTimeLeft,
   } = useGame()
 
   const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -24,25 +23,9 @@ function PlayerGamePage() {
   
   const question = getCurrentQuestion()
 
-  const handleTimeUp = () => {
-    if (!hasAnswered) {
-      setHasAnswered(true)
-      setTimeout(() => {
-        navigate(`/play/${roomCode}/result`, { 
-          state: { resultType: 'timeout' }
-        })
-      }, 1000)
-    }
-  }
-
-  const { timeLeft, isCritical, isTimeUp } = useTimer(
-    question?.time || serverTimeLeft || 15,
-    isPaused,
-    handleTimeUp
-  )
-
+  // Rediriger quand le temps est écoulé (géré par le serveur)
   useEffect(() => {
-    if (isTimeUp && !hasAnswered) {
+    if (timeLeft <= 0 && !hasAnswered) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasAnswered(true)
       setTimeout(() => {
@@ -51,7 +34,7 @@ function PlayerGamePage() {
         })
       }, 1000)
     }
-  }, [hasAnswered, isTimeUp, navigate, roomCode])
+  }, [timeLeft, hasAnswered, navigate, roomCode])
 
   if (!currentPlayer || !question) {
     return (
@@ -75,7 +58,7 @@ function PlayerGamePage() {
           selectedAnswer: index,
         }
       })
-    }, 800)
+    }, 500)
   }
 
   const handlePass = () => {
@@ -91,7 +74,7 @@ function PlayerGamePage() {
       navigate(`/play/${roomCode}/result`, { 
         state: { resultType: 'passed' }
       })
-    }, 500)
+    }, 300)
   }
 
   const cancelPass = () => {
@@ -100,6 +83,8 @@ function PlayerGamePage() {
 
   const answers = question.answers || []
   const answerLabels = ['A', 'B', 'C', 'D']
+  const isCritical = timeLeft <= 5 && timeLeft > 0
+  const isTimeUp = timeLeft <= 0
 
   const difficultyColors = {
     'Facile': 'bg-secondary-container text-on-secondary-container',
@@ -114,7 +99,7 @@ function PlayerGamePage() {
       <header className="w-full bg-surface shadow-sm border-b border-outline-variant px-gutter-mobile py-3 flex items-center justify-between shrink-0 z-50">
         <div className="bg-surface border border-outline-variant px-4 py-1 rounded-full">
           <span className="font-label-lg text-label-lg text-on-surface">
-            Question {currentQuestionIndex + 1}/{totalQuestions}
+            Q{currentQuestionIndex + 1}/{totalQuestions}
           </span>
         </div>
         
@@ -127,62 +112,55 @@ function PlayerGamePage() {
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col justify-between px-gutter-mobile max-w-lg mx-auto w-full py-6">
+      <main className="flex-grow flex flex-col px-gutter-mobile max-w-lg mx-auto w-full py-4">
         
-        <div className="flex flex-col items-center mb-8">
-          
+        {/* Timer */}
+        <div className="flex justify-center mb-4">
           <div className={`
-            bg-surface border-2 rounded-full px-8 py-4 flex items-center gap-3 shadow-sm mb-6
+            bg-surface border-2 rounded-full px-6 py-3 flex items-center gap-3 shadow-sm
             transition-all duration-300
-            ${isCritical 
-              ? 'border-error shadow-error/20' 
-              : isTimeUp 
-                ? 'border-error bg-error-container' 
-                : 'border-outline-variant'
-            }
+            ${isCritical ? 'border-error' : isTimeUp ? 'border-error bg-error-container' : 'border-outline-variant'}
+            ${isPaused ? 'opacity-50' : ''}
           `}>
-            <span className={`
-              material-symbols-outlined text-3xl
-              ${isCritical ? 'text-error animate-pulse' : isTimeUp ? 'text-error' : 'text-primary'}
-            `}>
+            <span className={`material-symbols-outlined text-2xl ${isCritical ? 'text-error animate-pulse' : isTimeUp ? 'text-error' : 'text-primary'}`}>
               timer
             </span>
-            <span className={`
-              font-display-md text-display-md font-extrabold
-              ${isCritical ? 'text-error animate-pulse' : isTimeUp ? 'text-error' : 'text-primary'}
-            `}>
+            <span className={`font-headline-md text-headline-md font-extrabold ${isCritical ? 'text-error animate-pulse' : isTimeUp ? 'text-error' : 'text-primary'}`}>
               {timeLeft}s
             </span>
           </div>
-
-          {isTimeUp && !hasAnswered && (
-            <div className="bg-error-container text-on-error-container px-6 py-3 rounded-xl font-headline-md text-headline-md text-center animate-pulse mb-4">
-              ⏰ Temps écoulé !
-            </div>
-          )}
-
-          <div className="bg-surface-container-low rounded-xl px-6 py-3">
-            <span className="font-body-md text-body-md text-on-surface-variant">Score : </span>
-            <span className="font-headline-md text-headline-md text-on-surface">{currentPlayer.score || 0} pts</span>
-          </div>
-
         </div>
 
-        <div className="bg-surface-container-low rounded-xl p-4 mb-4 text-center">
-          <p className="font-body-md text-body-md text-on-surface-variant">
-            Regarde la question sur l'écran principal 📺
+        {/* LA QUESTION S'AFFICHE ICI */}
+        <div className="bg-surface border border-outline-variant rounded-2xl p-6 mb-6 shadow-sm text-center">
+          <h2 className="font-headline-lg text-headline-lg text-on-surface mb-2">
+            {question.question}
+          </h2>
+          <p className="font-label-sm text-label-sm text-on-surface-variant mt-2">
+            Choisis la bonne réponse
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 mb-6">
-          
+        {isTimeUp && !hasAnswered && (
+          <div className="bg-error-container text-on-error-container px-4 py-2 rounded-xl font-headline-md text-headline-md text-center animate-pulse mb-4">
+            ⏰ Temps écoulé !
+          </div>
+        )}
+
+        <div className="bg-surface-container-low rounded-xl px-4 py-2 mb-4 text-center">
+          <span className="font-body-md text-body-md text-on-surface-variant">Score : </span>
+          <span className="font-headline-md text-headline-md text-on-surface">{currentPlayer.score || 0} pts</span>
+        </div>
+
+        {/* Boutons de réponse */}
+        <div className="flex flex-col gap-3 mb-4 flex-1">
           {answers.map((answer, index) => (
             <button
               key={index}
               onClick={() => handleAnswer(index)}
               disabled={hasAnswered}
               className={`
-                w-full px-6 py-6 rounded-xl font-headline-lg text-headline-lg
+                w-full px-5 py-5 rounded-xl font-headline-md text-headline-md
                 flex items-center gap-4
                 transition-all active:scale-95 duration-100
                 ${hasAnswered && selectedAnswer === index
@@ -194,7 +172,7 @@ function PlayerGamePage() {
               `}
             >
               <div className={`
-                w-12 h-12 rounded-lg flex items-center justify-center font-display-md text-display-md shrink-0
+                w-10 h-10 rounded-lg flex items-center justify-center font-display-md text-display-md shrink-0
                 ${hasAnswered && selectedAnswer === index
                   ? 'bg-on-primary/20 text-on-primary'
                   : 'bg-surface-container-low text-on-surface-variant'
@@ -202,7 +180,7 @@ function PlayerGamePage() {
               `}>
                 {answerLabels[index]}
               </div>
-              <span className="flex-1 text-left">
+              <span className="flex-1 text-left text-base">
                 {answer}
               </span>
               {hasAnswered && selectedAnswer === index && (
@@ -210,31 +188,30 @@ function PlayerGamePage() {
               )}
             </button>
           ))}
-
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          
+        {/* Bouton Passer */}
+        <div className="flex flex-col items-center gap-3 pb-4">
           {!hasAnswered && (
             <button
               onClick={handlePass}
-              className="w-full px-6 py-4 rounded-xl font-headline-md text-headline-md
+              className="w-full px-5 py-4 rounded-xl font-label-lg text-label-lg
                 border-2 border-outline-variant text-on-surface-variant
                 hover:bg-surface-container-low transition-all active:scale-95 duration-100
                 flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined">skip_next</span>
-              Je passe
+              Je passe (0 point)
             </button>
           )}
 
           {hasAnswered && (
             <div className="text-center">
-              <span className="material-symbols-outlined text-4xl text-on-surface-variant animate-spin">
+              <span className="material-symbols-outlined text-3xl text-on-surface-variant animate-spin">
                 progress_activity
               </span>
-              <p className="font-body-md text-body-md text-on-surface-variant mt-2">
-                Résultat...
+              <p className="font-body-sm text-on-surface-variant mt-1">
+                En attente du résultat...
               </p>
             </div>
           )}
@@ -243,7 +220,6 @@ function PlayerGamePage() {
             <div className="w-2 h-2 rounded-full bg-secondary"></div>
             <span className="font-label-sm text-label-sm">Connecté</span>
           </div>
-
         </div>
 
       </main>
@@ -258,7 +234,7 @@ function PlayerGamePage() {
               Passer la question ?
             </h3>
             <p className="font-body-md text-body-md text-on-surface-variant mb-8">
-              Tu ne gagneras pas de points sur cette question (0 point)
+              Tu ne gagneras pas de points (0 point)
             </p>
             <div className="flex gap-4">
               <button
