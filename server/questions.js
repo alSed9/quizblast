@@ -2,189 +2,189 @@ const questions = [
   // ==================== FACILE (questions 1-8) ====================
   {
     id: 1, difficulty: 'Facile', time: 15,
-    question: 'Quel animal est le symbole du Bénin ?',
-    answers: ['Lion', 'Éléphant', 'Panthère', 'Aigle'],
+    question: 'Quel est le jour qui suit le lundi ?',
+    answers: ['Dimanche', 'Mardi', 'Mercredi', 'Samedi'],
     correctIndex: 1
   },
   {
     id: 2, difficulty: 'Facile', time: 15,
-    question: 'Combien font 7 × 8 ?',
-    answers: ['48', '54', '56', '64'],
+    question: 'De quelle couleur est le ciel par beau temps ?',
+    answers: ['Vert', 'Rouge', 'Bleu', 'Jaune'],
     correctIndex: 2
   },
   {
     id: 3, difficulty: 'Facile', time: 15,
-    question: 'Quelle application a popularisé les vidéos courtes ?',
-    answers: ['YouTube', 'TikTok', 'Snapchat', 'Instagram'],
-    correctIndex: 1
+    question: 'Combien font 10 + 5 ?',
+    answers: ['12', '14', '15', '16'],
+    correctIndex: 2
   },
   {
     id: 4, difficulty: 'Facile', time: 15,
-    question: 'Qui est le créateur de Dragon Ball ?',
-    answers: ['Eiichiro Oda', 'Akira Toriyama', 'Masashi Kishimoto', 'Tite Kubo'],
+    question: 'Quel animal miaule ?',
+    answers: ['Chien', 'Chat', 'Vache', 'Mouton'],
     correctIndex: 1
   },
   {
     id: 5, difficulty: 'Facile', time: 15,
-    question: 'Quel est le pays le plus peuplé d\'Afrique ?',
-    answers: ['Égypte', 'Nigeria', 'Éthiopie', 'RD Congo'],
-    correctIndex: 1
+    question: 'Combien y a-t-il de doigts sur les deux mains ?',
+    answers: ['8', '9', '10', '12'],
+    correctIndex: 2
   },
   {
     id: 6, difficulty: 'Facile', time: 15,
-    question: 'De quelle couleur est le ciel la nuit ?',
-    answers: ['Bleu', 'Noir', 'Violet', 'Blanc'],
+    question: 'Que boit un bébé ?',
+    answers: ['Café', 'Lait', 'Jus d\'orange', 'Coca'],
     correctIndex: 1
   },
   {
     id: 7, difficulty: 'Facile', time: 15,
-    question: 'Que signifie "Google" ?',
-    answers: ['Chercher', 'Un chiffre énorme (Googol)', 'Rapide', 'Navigateur'],
+    question: 'Quel est le contraire de "grand" ?',
+    answers: ['Large', 'Petit', 'Haut', 'Long'],
     correctIndex: 1
   },
   {
     id: 8, difficulty: 'Facile', time: 15,
-    question: 'Combien de jours y a-t-il dans une année bissextile ?',
-    answers: ['364', '365', '366', '367'],
-    correctIndex: 2
+    question: 'Avec quoi écrit-on sur un tableau ?',
+    answers: ['Stylo', 'Craie', 'Crayon', 'Pinceau'],
+    correctIndex: 1
   },
 
   // ==================== MOYEN (questions 9-16) ====================
   {
     id: 9, difficulty: 'Moyen', time: 20,
-    question: 'Quel pays africain est le plus grand producteur d\'or ?',
-    answers: ['Afrique du Sud', 'Ghana', 'Mali', 'Soudan'],
+    question: 'Quelle est la capitale du Bénin ?',
+    answers: ['Cotonou', 'Porto-Novo', 'Parakou', 'Abomey'],
     correctIndex: 1
   },
   {
     id: 10, difficulty: 'Moyen', time: 20,
-    question: 'Quelle mer est la plus salée du monde ?',
-    answers: ['Mer Morte', 'Mer Rouge', 'Mer Méditerranée', 'Mer Noire'],
-    correctIndex: 0
+    question: 'Combien de planètes y a-t-il dans le système solaire ?',
+    answers: ['7', '8', '9', '10'],
+    correctIndex: 1
   },
   {
     id: 11, difficulty: 'Moyen', time: 20,
-    question: 'Qui joue le rôle de Joker dans "The Dark Knight" ?',
-    answers: ['Jack Nicholson', 'Heath Ledger', 'Joaquin Phoenix', 'Jared Leto'],
+    question: 'Qui est le créateur de One Piece ?',
+    answers: ['Akira Toriyama', 'Eiichiro Oda', 'Masashi Kishimoto', 'Tite Kubo'],
     correctIndex: 1
   },
   {
     id: 12, difficulty: 'Moyen', time: 20,
-    question: 'Quel footballeur africain a remporté le Ballon d\'Or ?',
-    answers: ['Didier Drogba', 'Samuel Eto\'o', 'George Weah', 'Mohamed Salah'],
-    correctIndex: 2
+    question: 'Quel est le plus grand pays d\'Afrique ?',
+    answers: ['Nigeria', 'Algérie', 'RD Congo', 'Soudan'],
+    correctIndex: 1
   },
   {
     id: 13, difficulty: 'Moyen', time: 20,
-    question: 'Dans Harry Potter, quel est le nom de l\'école de sorcellerie ?',
-    answers: ['Durmstrang', 'Beauxbâtons', 'Poudlard', 'Ilvermorny'],
-    correctIndex: 2
+    question: 'Dans Naruto, qui est le rival de Naruto ?',
+    answers: ['Kakashi', 'Sasuke', 'Shikamaru', 'Neji'],
+    correctIndex: 1
   },
   {
     id: 14, difficulty: 'Moyen', time: 20,
-    question: 'Quel est le plus long fleuve du monde ?',
-    answers: ['Nil', 'Amazone', 'Mississippi', 'Yangtsé'],
+    question: 'Qui chante "Yemanja" ?',
+    answers: ['Angélique Kidjo', 'Beyoncé', 'Rihanna', 'Yemi Alade'],
     correctIndex: 0
   },
   {
     id: 15, difficulty: 'Moyen', time: 20,
-    question: 'Quelle est la capitale du Sénégal ?',
-    answers: ['Bamako', 'Dakar', 'Abidjan', 'Conakry'],
-    correctIndex: 1
+    question: 'Quel réseau social appartient à Elon Musk ?',
+    answers: ['Facebook', 'Instagram', 'X (Twitter)', 'Snapchat'],
+    correctIndex: 2
   },
   {
     id: 16, difficulty: 'Moyen', time: 20,
-    question: 'Qui a chanté "Thriller" ?',
-    answers: ['Prince', 'Michael Jackson', 'Stevie Wonder', 'Marvin Gaye'],
+    question: 'Quel est le sport le plus populaire en Afrique ?',
+    answers: ['Basketball', 'Football', 'Rugby', 'Athlétisme'],
     correctIndex: 1
   },
 
   // ==================== DIFFICILE (questions 17-24) ====================
   {
     id: 17, difficulty: 'Difficile', time: 25,
-    question: 'Quel pays africain était autrefois appelé la "Haute-Volta" ?',
-    answers: ['Mali', 'Burkina Faso', 'Niger', 'Tchad'],
+    question: 'En quelle année le Bénin a-t-il obtenu son indépendance ?',
+    answers: ['1958', '1960', '1962', '1965'],
     correctIndex: 1
   },
   {
     id: 18, difficulty: 'Difficile', time: 25,
-    question: 'Quel est l\'élément le plus abondant dans l\'univers ?',
-    answers: ['Oxygène', 'Hydrogène', 'Hélium', 'Carbone'],
+    question: 'Quel est le plus grand désert chaud du monde ?',
+    answers: ['Gobi', 'Sahara', 'Kalahari', 'Mojave'],
     correctIndex: 1
   },
   {
     id: 19, difficulty: 'Difficile', time: 25,
-    question: 'Dans Jujutsu Kaisen, quel est le nom du démon le plus puissant ?',
-    answers: ['Mahito', 'Sukuna', 'Jogo', 'Hanami'],
+    question: 'Dans Dragon Ball, comment s\'appelle la transformation ultime de Goku ?',
+    answers: ['Super Saiyan', 'Ultra Instinct', 'Kaioken', 'Fusion'],
     correctIndex: 1
   },
   {
     id: 20, difficulty: 'Difficile', time: 25,
-    question: 'Qui a remporté la première Coupe du Monde de football en 1930 ?',
-    answers: ['Brésil', 'Uruguay', 'Argentine', 'Italie'],
+    question: 'Qui était le premier président du Ghana indépendant ?',
+    answers: ['Nelson Mandela', 'Kwame Nkrumah', 'Julius Nyerere', 'Patrice Lumumba'],
     correctIndex: 1
   },
   {
     id: 21, difficulty: 'Difficile', time: 25,
-    question: 'Quel pays abrite le lac Victoria ?',
-    answers: ['Kenya', 'Ouganda', 'Tanzanie', 'Les trois'],
-    correctIndex: 3
-  },
-  {
-    id: 22, difficulty: 'Difficile', time: 25,
-    question: 'Qu\'est-ce que le "phishing" sur Internet ?',
-    answers: ['Un jeu en ligne', 'Une tentative d\'escroquerie', 'Un réseau social', 'Un antivirus'],
+    question: 'Quel organe pompe le sang dans le corps ?',
+    answers: ['Cerveau', 'Cœur', 'Foie', 'Poumons'],
     correctIndex: 1
   },
   {
+    id: 22, difficulty: 'Difficile', time: 25,
+    question: 'Quel pays a inventé le chocolat ?',
+    answers: ['Suisse', 'Belgique', 'Mexique', 'France'],
+    correctIndex: 2
+  },
+  {
     id: 23, difficulty: 'Difficile', time: 25,
-    question: 'Quel mammifère pond des œufs ?',
-    answers: ['Chauve-souris', 'Ornithorynque', 'Dauphin', 'Pangolin'],
+    question: 'Quelle est la monnaie du Nigeria ?',
+    answers: ['Cedi', 'Naira', 'Franc CFA', 'Shilling'],
     correctIndex: 1
   },
   {
     id: 24, difficulty: 'Difficile', time: 25,
-    question: 'Quel est le désert le plus chaud du monde ?',
-    answers: ['Sahara', 'Gobi', 'Lut (Iran)', 'Mojave'],
-    correctIndex: 2
+    question: 'Combien d\'os a un corps humain adulte ?',
+    answers: ['186', '206', '226', '256'],
+    correctIndex: 1
   },
 
   // ==================== EXPERT (questions 25-30) ====================
   {
     id: 25, difficulty: 'Expert', time: 30,
-    question: 'Qui était le roi du Bénin (Dahomey) connu pour ses Amazones ?',
-    answers: ['Béhanzin', 'Guézo', 'Glèlè', 'Agadja'],
-    correctIndex: 1
+    question: 'Quel roi du Dahomey a résisté à la colonisation française ?',
+    answers: ['Guézo', 'Glèlè', 'Béhanzin', 'Agadja'],
+    correctIndex: 2
   },
   {
     id: 26, difficulty: 'Expert', time: 30,
-    question: 'Qu\'est-ce que le "Deep Web" ?',
-    answers: ['Un site de streaming', 'La partie non indexée d\'Internet', 'Un navigateur', 'Un réseau WiFi'],
+    question: 'Quelle est la vitesse de la lumière ?',
+    answers: ['~150 000 km/s', '~300 000 km/s', '~450 000 km/s', '~600 000 km/s'],
     correctIndex: 1
   },
   {
     id: 27, difficulty: 'Expert', time: 30,
-    question: 'Quel est le seul pays africain à n\'avoir jamais été colonisé ?',
-    answers: ['Éthiopie', 'Liberia', 'Les deux', 'Aucun'],
-    correctIndex: 2
-  },
-  {
-    id: 28, difficulty: 'Expert', time: 30,
-    question: 'Quelle est la protéine responsable de la contraction musculaire ?',
-    answers: ['Hémoglobine', 'Myosine', 'Kératine', 'Collagène'],
+    question: 'Dans L\'Attaque des Titans, qui est le Titan Colossal ?',
+    answers: ['Reiner', 'Bertholdt', 'Eren', 'Armin'],
     correctIndex: 1
   },
   {
+    id: 28, difficulty: 'Expert', time: 30,
+    question: 'Quel est le seul pays africain à n\'avoir jamais été colonisé ?',
+    answers: ['Liberia', 'Éthiopie', 'Les deux', 'Aucun'],
+    correctIndex: 2
+  },
+  {
     id: 29, difficulty: 'Expert', time: 30,
-    question: 'Dans Death Note, quel est le vrai nom de L ?',
-    answers: ['Light Yagami', 'L Lawliet', 'Near', 'Mello'],
+    question: 'Qu\'est-ce que le "quantum" en physique ?',
+    answers: ['Une particule géante', 'La plus petite unité d\'énergie', 'Une galaxie', 'Un type de lumière'],
     correctIndex: 1
   },
   {
     id: 30, difficulty: 'Expert', time: 30,
-    question: 'Quel pays a inventé le café ?',
-    answers: ['Brésil', 'Colombie', 'Éthiopie', 'Italie'],
-    correctIndex: 2
+    question: 'Quel écrivain a écrit "L\'Enfant noir" ?',
+    answers: ['Ahmadou Kourouma', 'Camara Laye', 'Mongo Beti', 'Ferdinand Oyono'],
+    correctIndex: 1
   },
 ]
 
